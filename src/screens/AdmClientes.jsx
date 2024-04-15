@@ -118,19 +118,31 @@ const AdmClientes = () => {
             <Th>ID</Th>
             <Th>Nombre</Th>
             <Th>Apellido</Th>
-            <Th>Identificación</Th>
+            <Th>Telefono</Th>
+            <Th>Identificacion</Th>
+            <Th>Pais residencia</Th>
+            <Th>Direccion</Th>
+            <Th>Numero de Tarjeta</Th>
+            <Th>Tipo de Tarjeta</Th>
+            <Th>Tipo de Cliente</Th>
             <Th></Th>
           </Tr>
         </thead>
         <tbody>
         {clientes
-          .filter((cliente) => cliente.cedula.includes(filtroCedula))
+          .filter((cliente) => cliente.identificacion.includes(filtroCedula))
           .map((cliente) => (
-            <Tr key={cliente.idCliente}>
-              <Td><a href={`/AdmClientes/FormClienteModificar/${cliente.idCliente}`}>{cliente.idCliente}</a></Td>
-              <Td>{cliente.nombreCliente}</Td>
-              <Td>{cliente.apellidoCliente}</Td>
-              <Td>{cliente.cedula}</Td>
+            <Tr key={cliente.id}>
+              <Td><a href={`/AdmClientes/FormClienteModificar/${cliente.id}`}>{cliente.id}</a></Td>
+              <Td>{cliente.nombre}</Td>
+              <Td>{cliente.apellidos}</Td>
+              <Td>{cliente.telefono}</Td>
+              <Td>{cliente.identificacion}</Td>
+              <Td>{cliente.paisResidencia}</Td>
+              <Td>{cliente.direccion}</Td>
+              <Td>{cliente.numeroTarjeta}</Td>
+              <Td>{cliente.tipoTarjeta}</Td>
+              <Td>{cliente.tipoCliente}</Td>
               <Td>
                 <BotonAccionEliminar onClick={() => handleDelete(cliente.idCliente)}>Eliminar</BotonAccionEliminar>
                 
