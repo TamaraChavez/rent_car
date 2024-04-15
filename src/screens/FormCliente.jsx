@@ -88,7 +88,7 @@ const FormCliente = () => {
 
 
 const resetForm = () => {
-    setCliente({ cedula: '', nombreCliente: '', apellidoCliente: '' });
+    setCliente({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', numeroTarjeta: '', tipoTarjeta:'', tipoCliente: '' });
 };
 
 
