@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const FormCliente = () => {
-  const [cliente, setCliente] = useState({ cedula: '', nombreCliente: '', apellidoCliente: '' });
+  const [cliente, setCliente] = useState({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', numeroTarjeta: '', tipoTarjeta:'', tipoCliente: ''});
 
 
 
@@ -16,12 +16,12 @@ const FormCliente = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    if (!cliente.cedula || !cliente.nombreCliente || !cliente.apellidoCliente) {
+    if (!cliente.identificacion|| !cliente.nombre || !cliente.apellidos || !cliente.telefono || !cliente.telefono|| !cliente.paisResidencia || !cliente.direccion || !cliente.numeroTarjeta || !cliente.tipoTarjeta || !cliente.tipoCliente)  {
       console.error('Todos los campos son obligatorios');
       return;
     }
 
-    if (!/^\d{10}$/.test(cliente.cedula)) {
+    if (!/^\d{10}$/.test(cliente.identificacion)) {
       alert("La Identificación debe tener exactamente 10 dígitos y solo debe contener números");
       return;
     }
@@ -45,9 +45,15 @@ const FormCliente = () => {
   
 
     const datosCliente = {
-      nombreCliente: cliente.nombreCliente,
-      apellidoCliente: cliente.apellidoCliente,
-      cedula: cliente.cedula
+      nombre: cliente.nombre,
+      apellidos: cliente.apellidos,
+      telefono: cliente.telefono,
+      identificacion: cliente.identificacion,
+      paisResidencia: cliente.paisResidencia, 
+      direccion: cliente.direccion,
+      numeroTarjeta: cliente.numeroTarjeta,
+      tipoTarjeta: cliente. tipoTarjeta, 
+      tipoCliente: cliente.tipoCliente
     };
   
     // Primero intentar insertar en SQL Server
@@ -90,13 +96,12 @@ const resetForm = () => {
     <ContenedorTabla>
       <h1>Crear Cliente</h1>
       <FormContainer>
-        
         <StyledForm onSubmit={handleSubmit}>
         <StyledLabel>Identificación:</StyledLabel>
           <StyledInput
             type="text"
-            name="cedula"
-            value={cliente.cedula}
+            name="identificacion"
+            value={cliente.identificacion}
             onChange={handleChange}
             placeholder="Identificación"
             required
@@ -104,8 +109,8 @@ const resetForm = () => {
           <StyledLabel>Nombre:</StyledLabel>
           <StyledInput
             type="text"
-            name="nombreCliente"
-            value={cliente.nombreCliente}
+            name="nombre"
+            value={cliente.nombre}
             onChange={handleChange}
             placeholder="Nombre Cliente"
             required
@@ -113,12 +118,67 @@ const resetForm = () => {
           <StyledLabel>Apellido:</StyledLabel>
           <StyledInput
             type="text"
-            name="apellidoCliente"
-            value={cliente.apellidoCliente}
+            name="apellidos"
+            value={cliente.apellidos}
             onChange={handleChange}
             placeholder="Apellido Cliente"
             required
           />
+          <StyledLabel>Telefono:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="telefono"
+            value={cliente.telefono}
+            onChange={handleChange}
+            placeholder="Telefono"
+            required
+          />
+          <StyledLabel>Pais residencia:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="paisResidencia"
+            value={cliente.paisResidencia}
+            onChange={handleChange}
+            placeholder="paisResidencia"
+            required
+          />
+          <StyledLabel>Direccion:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="direccion"
+            value={cliente.direccion}
+            onChange={handleChange}
+            placeholder="direccion"
+            required
+          />
+          <StyledLabel>Numero Tarjeta:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="numeroTarjeta"
+            value={cliente.numeroTarjeta}
+            onChange={handleChange}
+            placeholder="numeroTarjeta"
+            required
+          />
+          <StyledLabel>Tipo Tarjeta:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="tipoTarjeta"
+            value={cliente.tipoTarjeta}
+            onChange={handleChange}
+            placeholder="tipoTarjeta"
+            required
+          />
+          <StyledLabel>Tipo Cliente:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="tipoCliente"
+            value={cliente.tipoCliente}
+            onChange={handleChange}
+            placeholder="tipoCliente"
+            required
+          />
+
           <ContenedorBotones>
             <BotonAgregar type="submit">Guardar</BotonAgregar>
             <BotonCancelar as={Link} to="/AdmClientes">Cancelar</BotonCancelar>

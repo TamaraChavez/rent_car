@@ -11,7 +11,6 @@ const AdmClientes = () => {
   //Neuvo estado para controlar el filtrado de clientes
   const [filtroCedula, setFiltroCedula] = useState('');
 
- 
 
   const cargarClientes = () => {
     fetch('http://127.0.0.1:3001/clientes-sql')
@@ -28,7 +27,7 @@ const AdmClientes = () => {
  
 
 
-  const handleDelete = async (idCliente) => {
+  const handleDelete = async (id) => {
     const confirmar = window.confirm("¿Realmente desea eliminar el registro seleccionado?");
     
     if (!confirmar) {
@@ -37,7 +36,7 @@ const AdmClientes = () => {
     
     try {
       // Usa el nuevo endpoint que maneja ambas bases de datos
-      const url = `http://127.0.0.1:3001/clientes/${idCliente}`;
+      const url = `http://127.0.0.1:3001/clientes/${id}`;
       const response = await fetch(url, { method: 'DELETE' });
       const data = await response.json();
       
@@ -45,7 +44,7 @@ const AdmClientes = () => {
       console.log('Cliente eliminado:', data.message);
     
       // Actualiza el estado de clientes en la UI después de la eliminación exitosa
-      setClientes(prevClientes => prevClientes.filter(cliente => cliente.idCliente !== idCliente));
+      setClientes(prevClientes => prevClientes.filter(cliente => cliente.id !== id));
     } catch (error) {
       console.error('Error al eliminar el cliente:', error);
       alert(`Error al eliminar el cliente: ${error.message}`);
@@ -75,7 +74,7 @@ const AdmClientes = () => {
     };
   
     // Actualizar en SQL Server
-    actualizarEnBaseDeDatos(`http://127.0.0.1:3001/clientes-sql/${clienteActualizado.idCliente}`)
+    actualizarEnBaseDeDatos(`http://127.0.0.1:3001/clientes-sql/${clienteActualizado.id}`)
       .then(() => {
         console.log('Cliente actualizado en SQL Server');
         
@@ -83,7 +82,7 @@ const AdmClientes = () => {
       .catch(error => console.error('Error al actualizar en SQL Server:', error));
   
     // Actualizar en MySQL
-    actualizarEnBaseDeDatos(`http://127.0.0.1:3001/clientes-mysql/${clienteActualizado.idCliente}`)
+    actualizarEnBaseDeDatos(`http://127.0.0.1:3001/clientes-mysql/${clienteActualizado.id}`)
       .then(() => {
         console.log('Cliente actualizado en MySQL');
         
@@ -92,7 +91,7 @@ const AdmClientes = () => {
   
     // Opcional: actualiza el estado de la lista de clientes si ambas operaciones son independientes
     // y no necesitas confirmar que ambas fueron exitosas para actualizar el estado
-    const indice = clientes.findIndex(cliente => cliente.idCliente === clienteActualizado.idCliente);
+    const indice = clientes.findIndex(cliente => cliente.id === clienteActualizado.id);
     const clientesActualizados = [...clientes];
     clientesActualizados[indice] = clienteActualizado;
     setClientes(clientesActualizados);
@@ -144,7 +143,7 @@ const AdmClientes = () => {
               <Td>{cliente.tipoTarjeta}</Td>
               <Td>{cliente.tipoCliente}</Td>
               <Td>
-                <BotonAccionEliminar onClick={() => handleDelete(cliente.idCliente)}>Eliminar</BotonAccionEliminar>
+                <BotonAccionEliminar onClick={() => handleDelete(cliente.id)}>Eliminar</BotonAccionEliminar>
                 
               </Td>
             </Tr>
