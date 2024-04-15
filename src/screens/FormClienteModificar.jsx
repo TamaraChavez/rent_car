@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 const FormClienteModificar = ({onActualizarCliente}) => {
-  const [clienteModificar, setClienteModificar] = useState({ idCliente: '', nombreCliente: '', apellidoCliente: '' });
-  const { idCliente } = useParams();
+  const [clienteModificar, setClienteModificar] = useState({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', numeroTarjeta: '', tipoTarjeta:'', tipoCliente: ''});
+  const { id } = useParams();
 
   useEffect(() => {
-    cargarCliente(+idCliente); // Modificado: Pasar idCliente como argumento
-    console.log("idCliente: "+idCliente)
-  }, [idCliente]);
+    cargarCliente(+id); // Modificado: Pasar idCliente como argumento
+    console.log("idCliente: "+id)
+  }, [id]);
 
   const cargarCliente = (id) => {
     fetch(`http://127.0.0.1:3001/clientes-sql/${id}`)
@@ -20,10 +20,16 @@ const FormClienteModificar = ({onActualizarCliente}) => {
         if (data) {
           console.log(data);
           setClienteModificar({
-            idCliente: data.idCliente,
-            nombreCliente: data.nombreCliente,
-            apellidoCliente: data.apellidoCliente,
-            cedula: data.cedula 
+            id:cliente.id,
+            nombre: cliente.nombre,
+            apellidos: cliente.apellidos,
+            telefono: cliente.telefono,
+            identificacion: cliente.identificacion,
+            paisResidencia: cliente.paisResidencia, 
+            direccion: cliente.direccion,
+            numeroTarjeta: cliente.numeroTarjeta,
+            tipoTarjeta: cliente. tipoTarjeta, 
+            tipoCliente: cliente.tipoCliente
           });
 
         }
@@ -39,21 +45,27 @@ const FormClienteModificar = ({onActualizarCliente}) => {
     e.preventDefault();
   
     // Asegúrate de validar correctamente los campos antes de enviar la petición.
-    if (!clienteModificar.cedula || !clienteModificar.nombreCliente || !clienteModificar.apellidoCliente) {
+    if (!cliente.identificacion|| !cliente.nombre || !cliente.apellidos || !cliente.telefono || !cliente.telefono|| !cliente.paisResidencia || !cliente.direccion || !cliente.numeroTarjeta || !cliente.tipoTarjeta || !cliente.tipoCliente) {
       console.error('Todos los campos son obligatorios');
       return;
     }
   
     // Configura la petición PUT
-    fetch(`http://127.0.0.1:3001/clientes/${clienteModificar.idCliente}`, {
+    fetch(`http://127.0.0.1:3001/clientes/${clienteModificar.id}`, {
       method: 'PUT',
-      headers: {
+      headers: { 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        nombreCliente: clienteModificar.nombreCliente,
-        apellidoCliente: clienteModificar.apellidoCliente,
-        cedula: clienteModificar.cedula
+        nombre: clienteModificar.nombre,
+        apellidos: clienteModificar.apellidos,
+       telefono: clienteModificar.telefono,
+       identificacion: clienteModificar.identificacion,
+       paisResidencia: clienteModificar.paisResidencia,
+       direccion: clienteModificar.direccion,
+       numeroTarjeta: clienteModificar.numeroTarjeta,
+       tipoTarjeta: clienteModificar.tipoTarjeta,
+       tipoCliente: clienteModificar.tipoCliente
       })
     })
     .then(response => response.json())
@@ -74,13 +86,12 @@ const FormClienteModificar = ({onActualizarCliente}) => {
     <ContenedorTabla>
       <h1>Modificar Cliente</h1>
       <FormContainer>
-        
-        <StyledForm onSubmit={handleSubmit}>
+      <StyledForm onSubmit={handleSubmit}>
         <StyledLabel>Identificación:</StyledLabel>
           <StyledInput
             type="text"
-            name="cedula"
-            value={clienteModificar.cedula}
+            name="identificacion"
+            value={cliente.identificacion}
             onChange={handleChange}
             placeholder="Identificación"
             required
@@ -88,8 +99,8 @@ const FormClienteModificar = ({onActualizarCliente}) => {
           <StyledLabel>Nombre:</StyledLabel>
           <StyledInput
             type="text"
-            name="nombreCliente"
-            value={clienteModificar.nombreCliente}
+            name="nombre"
+            value={cliente.nombre}
             onChange={handleChange}
             placeholder="Nombre Cliente"
             required
@@ -97,12 +108,67 @@ const FormClienteModificar = ({onActualizarCliente}) => {
           <StyledLabel>Apellido:</StyledLabel>
           <StyledInput
             type="text"
-            name="apellidoCliente"
-            value={clienteModificar.apellidoCliente}
+            name="apellidos"
+            value={cliente.apellidos}
             onChange={handleChange}
             placeholder="Apellido Cliente"
             required
           />
+          <StyledLabel>Telefono:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="telefono"
+            value={cliente.telefono}
+            onChange={handleChange}
+            placeholder="Telefono"
+            required
+          />
+          <StyledLabel>Pais residencia:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="paisResidencia"
+            value={cliente.paisResidencia}
+            onChange={handleChange}
+            placeholder="paisResidencia"
+            required
+          />
+          <StyledLabel>Direccion:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="direccion"
+            value={cliente.direccion}
+            onChange={handleChange}
+            placeholder="direccion"
+            required
+          />
+          <StyledLabel>Numero Tarjeta:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="numeroTarjeta"
+            value={cliente.numeroTarjeta}
+            onChange={handleChange}
+            placeholder="numeroTarjeta"
+            required
+          />
+          <StyledLabel>Tipo Tarjeta:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="tipoTarjeta"
+            value={cliente.tipoTarjeta}
+            onChange={handleChange}
+            placeholder="tipoTarjeta"
+            required
+          />
+          <StyledLabel>Tipo Cliente:</StyledLabel>
+          <StyledInput
+            type="text"
+            name="tipoCliente"
+            value={cliente.tipoCliente}
+            onChange={handleChange}
+            placeholder="tipoCliente"
+            required
+          />
+
           <ContenedorBotones>
             <BotonAgregar type="submit">Guardar</BotonAgregar>
             <BotonCancelar as={Link} to="/AdmClientes">Cancelar</BotonCancelar>
