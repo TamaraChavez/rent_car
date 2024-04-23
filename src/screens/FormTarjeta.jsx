@@ -3,14 +3,12 @@ import styled from 'styled-components';
 
 const FormTarjeta = ({ recargarTarjetas }) => {
   const [tarjeta, setTarjeta] = useState({
-    numeroTarjeta: '',
+    NumeroTarjeta: '',
     PIN: '',
-    fechaVencimiento: '',
     CVV: '',
+    fechaVencimiento: '',
     montoDisponible: '',
-    estadoTarjeta: '',
     tipoTarjeta: '',
-    idCuenta: '',
     idCliente: ''
   });
   const [clientes, setClientes] = useState([]);
