@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const FormCliente = () => {
-  const [cliente, setCliente] = useState({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', numeroTarjeta: '', tipoTarjeta:'', tipoCliente: ''});
+  const [cliente, setCliente] = useState({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', tipoCliente: ''});
 
 
 
@@ -16,7 +16,7 @@ const FormCliente = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    if (!cliente.identificacion|| !cliente.nombre || !cliente.apellidos || !cliente.telefono || !cliente.telefono|| !cliente.paisResidencia || !cliente.direccion || !cliente.numeroTarjeta || !cliente.tipoTarjeta || !cliente.tipoCliente)  {
+    if (!cliente.identificacion|| !cliente.nombre || !cliente.apellidos || !cliente.telefono || !cliente.telefono|| !cliente.paisResidencia || !cliente.direccion || !cliente.tipoCliente)  {
       console.error('Todos los campos son obligatorios');
       return;
     }

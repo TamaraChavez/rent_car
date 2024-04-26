@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 const FormClienteModificar = ({onActualizarCliente}) => {
-  const [clienteModificar, setClienteModificar] = useState({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', numeroTarjeta: '', tipoTarjeta:'', tipoCliente: ''});
+  const [cliente, setClienteModificar] = useState({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', numeroTarjeta: '', tipoTarjeta:'', tipoCliente: ''});
   const { id } = useParams();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const FormClienteModificar = ({onActualizarCliente}) => {
       .catch(error => console.error("Error al obtener los datos:", error));
   };
   const handleChange = (e) => {
-    setClienteModificar({ ...clienteModificar, [e.target.name]: e.target.value });
+    setClienteModificar({ ...cliente, [e.target.name]: e.target.value });
   };
 
 
@@ -51,21 +51,21 @@ const FormClienteModificar = ({onActualizarCliente}) => {
     }
   
     // Configura la petición PUT
-    fetch(`http://127.0.0.1:3001/clientes/${clienteModificar.id}`, {
+    fetch(`http://127.0.0.1:3001/clientes/${cliente.id}`, {
       method: 'PUT',
       headers: { 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        nombre: clienteModificar.nombre,
-        apellidos: clienteModificar.apellidos,
-       telefono: clienteModificar.telefono,
-       identificacion: clienteModificar.identificacion,
-       paisResidencia: clienteModificar.paisResidencia,
-       direccion: clienteModificar.direccion,
-       numeroTarjeta: clienteModificar.numeroTarjeta,
-       tipoTarjeta: clienteModificar.tipoTarjeta,
-       tipoCliente: clienteModificar.tipoCliente
+        nombre: cliente.nombre,
+        apellidos: cliente.apellidos,
+       telefono: cliente.telefono,
+       identificacion: cliente.identificacion,
+       paisResidencia: cliente.paisResidencia,
+       direccion: cliente.direccion,
+       numeroTarjeta: cliente.numeroTarjeta,
+       tipoTarjeta: cliente.tipoTarjeta,
+       tipoCliente: cliente.tipoCliente
       })
     })
     .then(response => response.json())
