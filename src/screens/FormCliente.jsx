@@ -1,22 +1,34 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
 const FormCliente = () => {
-  const [cliente, setCliente] = useState({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', tipoCliente: ''});
-
+  const [cliente, setCliente] = useState({ nombre: '', apellidos: '', telefono: '', identificacion: '', paisResidencia: '', direccion: '', tipoCliente: '' });
+  const [paises, setPaises] = useState([])
+  const cargarPaises = () => {
+    fetch('http://127.0.0.1:3001/paises')
+      .then(response => response.json())
+      .then(data => {
+        setPaises(data);
+      })
+      .catch(error => console.error("Error al obtener los datos:", error));
+  };
+  
+  useEffect(() => {
+    cargarPaises();
+  }, []);
 
 
   const handleChange = (e) => {
     setCliente({ ...cliente, [e.target.name]: e.target.value });
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
-  
-    if (!cliente.identificacion|| !cliente.nombre || !cliente.apellidos || !cliente.telefono || !cliente.telefono|| !cliente.paisResidencia || !cliente.direccion || !cliente.tipoCliente)  {
+
+    if (!cliente.identificacion || !cliente.nombre || !cliente.apellidos || !cliente.telefono || !cliente.telefono || !cliente.paisResidencia || !cliente.direccion || !cliente.tipoCliente) {
       console.error('Todos los campos son obligatorios');
       return;
     }
@@ -25,7 +37,7 @@ const FormCliente = () => {
       alert("La Identificación debe tener exactamente 10 dígitos y solo debe contener números");
       return;
     }
-  
+
     // Definir una función auxiliar para insertar el cliente en una base de datos
     const insertarCliente = (url, clienteData) => {
       return fetch(url, {
@@ -35,61 +47,54 @@ const FormCliente = () => {
         },
         body: JSON.stringify(clienteData)
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      });
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        });
     };
-  
+
 
     const datosCliente = {
       nombre: cliente.nombre,
       apellidos: cliente.apellidos,
       telefono: cliente.telefono,
       identificacion: cliente.identificacion,
-      paisResidencia: cliente.paisResidencia, 
+      paisResidencia: cliente.paisResidencia,
       direccion: cliente.direccion,
-      numeroTarjeta: cliente.numeroTarjeta,
-      tipoTarjeta: cliente. tipoTarjeta, 
       tipoCliente: cliente.tipoCliente
     };
-  
+
     // Primero intentar insertar en SQL Server
-    insertarCliente('http://127.0.0.1:3001/clientes-sql', datosCliente)
+    insertarCliente('http://127.0.0.1:3001/clientes', datosCliente)
       .then(data => {
         console.log('Cliente agregado en SQL Server:', data);
         // Aquí capturamos el idCliente devuelto por el backend
         const idCliente = data.idCliente;
         console.log('ID del cliente agregado:', idCliente);
-  
-        // Si necesitas usar el idCliente para la siguiente inserción en MySQL o para otro propósito
-        // Asegúrate de incluir el idCliente en el objeto datosCliente si es necesario para la inserción en MySQL
-        // Esto depende de cómo esté configurado tu backend para manejar estas inserciones
+
         datosCliente.idCliente = idCliente;
-  
-        // Luego, si el primero tiene éxito, intentar insertar en MySQL (ajusta según tu lógica)
-        return insertarCliente('http://127.0.0.1:3001/clientes-mysql', datosCliente);
+
       })
       .then(data => {
         console.log('Cliente agregado en MySQL:', data);
-        alert('Cliente agregado con éxito en ambas bases de datos');
-     
-        resetForm(); 
+        alert('Cliente agregado con éxito');
+
+        resetForm();
       })
       .catch(error => {
         console.error('Error:', error);
         alert('Error al agregar el cliente. ' + error.message);
       });
   };
-  
-  
 
 
-const resetForm = () => {
-    setCliente({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', numeroTarjeta: '', tipoTarjeta:'', tipoCliente: '' });
-};
+
+
+  const resetForm = () => {
+    setCliente({ nombre: '', apellidos: '', telefono: '', identificacion: '', paisResidencia: '', direccion: '', tipoCliente: '' });
+  };
 
 
   return (
@@ -97,7 +102,7 @@ const resetForm = () => {
       <h1>Crear Cliente</h1>
       <FormContainer>
         <StyledForm onSubmit={handleSubmit}>
-        <StyledLabel>Identificación:</StyledLabel>
+          <StyledLabel>Identificación:</StyledLabel>
           <StyledInput
             type="text"
             name="identificacion"
@@ -134,50 +139,38 @@ const resetForm = () => {
             required
           />
           <StyledLabel>Pais residencia:</StyledLabel>
-          <StyledInput
-            type="text"
+          <StyledSelect
             name="paisResidencia"
             value={cliente.paisResidencia}
             onChange={handleChange}
-            placeholder="paisResidencia"
             required
-          />
+          >
+            <option value="">Seleccione un país</option>
+            {paises
+              .map((pais) => (
+                <option value={pais.idPais}>{pais.nombrePais}</option>
+              ))}
+          </StyledSelect>
           <StyledLabel>Direccion:</StyledLabel>
           <StyledInput
             type="text"
             name="direccion"
             value={cliente.direccion}
             onChange={handleChange}
-            placeholder="direccion"
-            required
-          />
-          <StyledLabel>Numero Tarjeta:</StyledLabel>
-          <StyledInput
-            type="text"
-            name="numeroTarjeta"
-            value={cliente.numeroTarjeta}
-            onChange={handleChange}
-            placeholder="numeroTarjeta"
-            required
-          />
-          <StyledLabel>Tipo Tarjeta:</StyledLabel>
-          <StyledInput
-            type="text"
-            name="tipoTarjeta"
-            value={cliente.tipoTarjeta}
-            onChange={handleChange}
-            placeholder="tipoTarjeta"
+            placeholder="Direccion"
             required
           />
           <StyledLabel>Tipo Cliente:</StyledLabel>
-          <StyledInput
-            type="text"
+          <StyledSelect
             name="tipoCliente"
             value={cliente.tipoCliente}
             onChange={handleChange}
-            placeholder="tipoCliente"
             required
-          />
+          >
+            <option value="">Seleccione un tipo</option>
+            <option value="1">Nacional</option>
+            <option value="2">Extranjero</option>
+          </StyledSelect>
 
           <ContenedorBotones>
             <BotonAgregar type="submit">Guardar</BotonAgregar>
@@ -232,6 +225,7 @@ const StyledInput = styled.input`
     outline: none;
   }
 `;
+const StyledSelect = styled(StyledInput).attrs({ as: 'select' })``;
 
 const BotonAccion = styled.button`
   text-decoration:none;

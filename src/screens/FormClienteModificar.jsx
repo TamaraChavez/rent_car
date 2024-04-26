@@ -1,93 +1,110 @@
+
 import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
 
-const FormClienteModificar = ({onActualizarCliente}) => {
-  const [cliente, setClienteModificar] = useState({ nombre: '', apellidos: '', telefono: '', identificacion:'', paisResidencia:'', direccion:'', numeroTarjeta: '', tipoTarjeta:'', tipoCliente: ''});
-  const { id } = useParams();
+const FormClienteModificar = () => {
+  const [cliente, setCliente] = useState({ nombre: '', apellidos: '', telefono: '', identificacion: '', paisResidencia: '', direccion: '', tipoCliente: '' });
+  const [paises, setPaises] = useState([]);
+  const {idCliente} = useParams();
 
-  useEffect(() => {
-    cargarCliente(+id); // Modificado: Pasar idCliente como argumento
-    console.log("idCliente: "+id)
-  }, [id]);
 
-  const cargarCliente = (id) => {
-    fetch(`http://127.0.0.1:3001/clientes-sql/${id}`)
+  const cargarCliente = () => {
+    if (!idCliente) {
+      console.error("No hay ID de cliente proporcionado");
+      return;
+    }
+
+    fetch(`http://127.0.0.1:3001/clientesID?identificacion=${idCliente}`)
       .then(response => response.json())
       .then(data => {
-      
-        if (data) {
-          console.log(data);
-          setClienteModificar({
-            id:cliente.id,
-            nombre: cliente.nombre,
-            apellidos: cliente.apellidos,
-            telefono: cliente.telefono,
-            identificacion: cliente.identificacion,
-            paisResidencia: cliente.paisResidencia, 
-            direccion: cliente.direccion,
-            numeroTarjeta: cliente.numeroTarjeta,
-            tipoTarjeta: cliente. tipoTarjeta, 
-            tipoCliente: cliente.tipoCliente
-          });
-
-        }
+        setCliente(data);
+      })
+      .catch(error => console.error("Error al obtener los datos:", error));
+};
+  const cargarPaises = () => {
+    fetch('http://127.0.0.1:3001/paises')
+      .then(response => response.json())
+      .then(data => {
+        setPaises(data);
       })
       .catch(error => console.error("Error al obtener los datos:", error));
   };
-  const handleChange = (e) => {
-    setClienteModificar({ ...cliente, [e.target.name]: e.target.value });
-  };
+  
+  useEffect(() => {
+    cargarCliente();
+    cargarPaises();
+  }, []);
 
+
+  const handleChange = (e) => {
+    setCliente({ ...cliente, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    // Asegúrate de validar correctamente los campos antes de enviar la petición.
-    if (!cliente.identificacion|| !cliente.nombre || !cliente.apellidos || !cliente.telefono || !cliente.telefono|| !cliente.paisResidencia || !cliente.direccion || !cliente.numeroTarjeta || !cliente.tipoTarjeta || !cliente.tipoCliente) {
+    // Verificar que todos los campos requeridos estén presentes
+    if (!cliente.identificacion || !cliente.nombre || !cliente.apellidos || !cliente.telefono || !cliente.idPaisResidencia || !cliente.direccion || !cliente.tipoCliente) {
       console.error('Todos los campos son obligatorios');
+      alert('Todos los campos son obligatorios');
       return;
     }
   
-    // Configura la petición PUT
-    fetch(`http://127.0.0.1:3001/clientes/${cliente.id}`, {
-      method: 'PUT',
-      headers: { 
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        nombre: cliente.nombre,
-        apellidos: cliente.apellidos,
-       telefono: cliente.telefono,
-       identificacion: cliente.identificacion,
-       paisResidencia: cliente.paisResidencia,
-       direccion: cliente.direccion,
-       numeroTarjeta: cliente.numeroTarjeta,
-       tipoTarjeta: cliente.tipoTarjeta,
-       tipoCliente: cliente.tipoCliente
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data.message);
-   
-      alert(data.message);
-   
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      // Manejar el error mostrando un mensaje al usuario, etc.
-    });
-  };
+    // Verificar que la identificación tenga exactamente 10 dígitos numéricos
+    if (!/^\d{10}$/.test(cliente.identificacion)) {
+      alert("La Identificación debe tener exactamente 10 dígitos y solo debe contener números");
+      return;
+    }
   
+    // Función auxiliar para modificar el cliente en la base de datos
+    const modificarCliente = (clienteData) => {
+      return fetch(`http://127.0.0.1:3001/clientes/${idCliente}`, {  // Asumiendo que el endpoint correcto para modificar es /clientes/:id
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(clienteData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      });
+    };
+  
+    // Construir objeto con datos del cliente a modificar
+    const datosCliente = {
+      nombre: cliente.nombre,
+      apellidos: cliente.apellidos,
+      telefono: cliente.telefono,
+      identificacion: cliente.identificacion,
+      paisResidencia: cliente.idPaisResidencia,
+      direccion: cliente.direccion,
+      tipoCliente: cliente.tipoCliente
+    };
+  
+    // Intentar modificar el cliente en la base de datos
+    modificarCliente(datosCliente)
+      .then(data => {
+        console.log('Cliente modificado con éxito:', data);
+        alert('Cliente modificado con éxito');
+        
+      })
+      .catch(error => {
+        console.error('Error al modificar el cliente:', error);
+        alert('Error al modificar el cliente: ' + error.message);
+      });
+  };
 
   return (
     <ContenedorTabla>
-      <h1>Modificar Cliente</h1>
+      <h1>Crear Cliente</h1>
       <FormContainer>
-      <StyledForm onSubmit={handleSubmit}>
-        <StyledLabel>Identificación:</StyledLabel>
+        <StyledForm onSubmit={handleSubmit}>
+          <StyledLabel>Identificación:</StyledLabel>
           <StyledInput
             type="text"
             name="identificacion"
@@ -124,50 +141,38 @@ const FormClienteModificar = ({onActualizarCliente}) => {
             required
           />
           <StyledLabel>Pais residencia:</StyledLabel>
-          <StyledInput
-            type="text"
-            name="paisResidencia"
-            value={cliente.paisResidencia}
+          <StyledSelect
+            name="idPaisResidencia"
+            value={cliente.idPaisResidencia}
             onChange={handleChange}
-            placeholder="paisResidencia"
             required
-          />
+          >
+            <option value="">Seleccione un país</option>
+            {paises
+              .map((pais) => (
+                <option value={pais.idPais}>{pais.nombrePais}</option>
+              ))}
+          </StyledSelect>
           <StyledLabel>Direccion:</StyledLabel>
           <StyledInput
             type="text"
             name="direccion"
             value={cliente.direccion}
             onChange={handleChange}
-            placeholder="direccion"
-            required
-          />
-          <StyledLabel>Numero Tarjeta:</StyledLabel>
-          <StyledInput
-            type="text"
-            name="numeroTarjeta"
-            value={cliente.numeroTarjeta}
-            onChange={handleChange}
-            placeholder="numeroTarjeta"
-            required
-          />
-          <StyledLabel>Tipo Tarjeta:</StyledLabel>
-          <StyledInput
-            type="text"
-            name="tipoTarjeta"
-            value={cliente.tipoTarjeta}
-            onChange={handleChange}
-            placeholder="tipoTarjeta"
+            placeholder="Direccion"
             required
           />
           <StyledLabel>Tipo Cliente:</StyledLabel>
-          <StyledInput
-            type="text"
+          <StyledSelect
             name="tipoCliente"
             value={cliente.tipoCliente}
             onChange={handleChange}
-            placeholder="tipoCliente"
             required
-          />
+          >
+            <option value="">Seleccione un tipo</option>
+            <option value="1">Nacional</option>
+            <option value="2">Extranjero</option>
+          </StyledSelect>
 
           <ContenedorBotones>
             <BotonAgregar type="submit">Guardar</BotonAgregar>
@@ -180,6 +185,7 @@ const FormClienteModificar = ({onActualizarCliente}) => {
 };
 
 export default FormClienteModificar;
+
 
 
 const ContenedorTabla = styled.div`
@@ -207,7 +213,7 @@ const FormContainer = styled.div`
 
 const StyledForm = styled.form`
   display: flex;
-  max-width:350px;
+  max-width:500px;
   flex-direction: column;
   gap: 15px;
 `;
@@ -221,6 +227,7 @@ const StyledInput = styled.input`
     outline: none;
   }
 `;
+const StyledSelect = styled(StyledInput).attrs({ as: 'select' })``;
 
 const BotonAccion = styled.button`
   text-decoration:none;
